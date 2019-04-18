@@ -54,7 +54,7 @@ def get_all_links():
 
         # запись полученных ссылок в файл
         f = open('links.txt', 'w')
-        json.dump(all_links, f)
+        json.dump(all_links, f, ensure_ascii=0, indent=2)
     else:
         with f:
             #print(u'делаем что-то с файлом links.txt')
@@ -182,6 +182,7 @@ if __name__ == '__main__':
     data_clean = []
     result = []
     normal_search = []
+    counter = 0
     search = 'индикатор звуковых сигналов'
     morph = pymorphy2.MorphAnalyzer()
 
@@ -209,10 +210,13 @@ if __name__ == '__main__':
 
             for item in data_clean:
                 words = item[2]
-                for word in words:
-                    if word[0] in normal_search and word[1] > 50:
-                        result.append([item[0], item[1], word])
-                        break
+                counter = 0
+                for n in normal_search:
+                    for word in words:
+                        if word[0] == n and word[1] > 50:
+                            counter = counter + 1
+                if counter >= normal_search.__len__()/2:
+                    result.append([item[0], item[1], counter])
 
             result.sort(key=lambda i: i[2], reverse=1)
             for r in result:
